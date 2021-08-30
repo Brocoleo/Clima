@@ -6,7 +6,7 @@ const CityComponent = (props) => {
   return (
     <>
       <WelcomeWeatherLogo src={"/react-weather-app/icons/perfect-day.svg"} />
-      <ChooseCityLabel>Busca una zona</ChooseCityLabel>
+      <ChooseCityLabel>Busca tu ciudad</ChooseCityLabel>
       <SearchBox onSubmit={fetchWeather}>
         <input
           onChange={(e) => updateCity(e.target.value)}
