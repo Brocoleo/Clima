@@ -20,6 +20,7 @@ export const WeatherIcons = {
   "11d": "/react-weather-app/icons/storm.svg",
   "11n": "/react-weather-app/icons/storm.svg",
   "50n": "/react-weather-app/icons/perfect-day.svg",
+  "50d": "/react-weather-app/icons/perfect-day.svg",
 };
 
 const Container = styled.div`
