@@ -1,11 +1,10 @@
 import React from "react";
-import {WelcomeWeatherLogo, SearchBox, ChooseCityLabel} from "./styles";
+import { SearchBox, ChooseCityLabel} from "./styles";
 
 const CityComponent = (props) => {
   const { updateCity, fetchWeather } = props;
   return (
     <>
-      <WelcomeWeatherLogo src={"/react-weather-app/icons/perfect-day.svg"} />
       <ChooseCityLabel>Busca tu ciudad</ChooseCityLabel>
       <SearchBox onSubmit={fetchWeather}>
         <input
