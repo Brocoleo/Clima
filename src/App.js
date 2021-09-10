@@ -15,7 +15,7 @@ const Container = styled.div`
   margin: auto;
   border-radius: 30px;
   box-shadow: 0 3px 6px 0 #334257;
-  background: linear-gradient(#334257, #476072);
+  background: #2a329e;
   font-family: Montserrat;
 `;
 
