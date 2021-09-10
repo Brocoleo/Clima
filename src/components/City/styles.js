@@ -32,6 +32,7 @@ border-radius: 2px;
 export const ChooseCityLabel = styled.span`
 color: white;
 margin: 10px auto;
+margin-bottom: 10%;
 font-size: 18px;
 font-weight: bold;
 `;

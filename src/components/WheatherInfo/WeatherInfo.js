@@ -1,6 +1,7 @@
 import React from "react";
-import {WeatherIcons} from "../../App";
-import {Condition, WeatherInfoContainer, WeatherInfoLabel, WeatherIcon, Location, InfoContainer, InfoIcon, InfoLabel, WeatherContainer} from "./styles"
+
+import Selector from "../Selector";
+import {Condition, WeatherInfoContainer, WeatherInfoLabel, Location, InfoContainer, InfoIcon, InfoLabel, WeatherContainer} from "./styles"
 
 export const WeatherInfoIcons = {
     atardecer: "/react-weather-app/icons/sunset.svg",
@@ -37,7 +38,7 @@ const WeatherComponent = (props) => {
                     <span>{`${Math.floor(weather?.main?.temp - 273)}°C`}</span>
                     {`  |  ${weather?.weather[0].description}`}
                 </Condition>
-                <WeatherIcon src={WeatherIcons[weather?.weather[0].icon]}/>
+                <Selector role={weather?.weather[0].icon} />
             </WeatherContainer>
             <Location>{`${weather?.name}, ${weather?.sys?.country}`}</Location>
 
