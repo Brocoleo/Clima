@@ -45,10 +45,10 @@ const WeatherComponent = (props) => {
             <WeatherInfoLabel>Informacion climatica</WeatherInfoLabel>
             <WeatherInfoContainer>
                 <WeatherInfoComponent name={isDay ? "atardecer" : "amanecer"}
-                                      value={`${getTime(weather?.sys[isDay ? "sunset" : "sunrise"])}`}/>
-                <WeatherInfoComponent name={"humedad"} value={weather?.main?.humidity}/>
-                <WeatherInfoComponent name={"viento"} value={weather?.wind?.speed}/>
-                <WeatherInfoComponent name={"presión"} value={weather?.main?.pressure}/>
+                                      value={`${getTime(weather?.sys[isDay ? "sunset" : "sunrise"])+` hrs`}`}/>
+                <WeatherInfoComponent name={"humedad"} value={weather?.main?.humidity +` %`}/>
+                <WeatherInfoComponent name={"viento"} value={weather?.wind?.speed +` m/s`}/>
+                <WeatherInfoComponent name={"presión"} value={weather?.main?.pressure +` hPa`}/>
             </WeatherInfoContainer>
         </>
     );
