@@ -1,49 +1,23 @@
-import React, { useState } from "react";
-import styled from "styled-components";
-import Axios from "axios";
-import CityComponent from "./components/City/CityComponent";
-import WeatherComponent from "./components/WheatherInfo/WeatherInfo";
-
-
-
-const Container = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: 380px;
-  padding: 20px 10px;
-  margin: auto;
-  border-radius: 30px;
-  box-shadow: 0 3px 6px 0 #334257;
-  background: #005C97;  
-background: -webkit-linear-gradient(to right, #363795, #005C97);  
-background: linear-gradient(to right, #363795, #005C97);
-
-
-
-  font-family: Montserrat;
-`;
-
-
-
-function App() {
-  const [city, updateCity] = useState();
-  const [weather, updateWeather] = useState();
-  const fetchWeather = async (e) => {
-    e.preventDefault();
-    const response = await Axios.get(
-      `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=fe4feefa8543e06d4f3c66d92c61b69c&lang=es`,
-    );
-    updateWeather(response.data);};
-  return (
-    <Container>
-      {city && weather ? (
-        <WeatherComponent weather={weather} city={city} />
-      ) : (
-        <CityComponent updateCity={updateCity} fetchWeather={fetchWeather} />
-      )}
-    </Container>
-  );
+import React,{useCallback,useEffect,useMemo,useRef,useState} from 'react';
+import styled from 'styled-components';
+import WeatherView from './components/WheatherInfo/WeatherInfo';
+import {Icon} from './components/Sky';
+import {DEFAULT_PLACE,getForecast,locate,nearbyPlaces,searchPlaces} from './weather';
+const AppFrame=styled.div`min-height:100vh;padding:28px 18px 48px;background:var(--page-bg);transition:background .5s;color:var(--ink);`;
+const AppHeader=styled.header`position:relative;z-index:5;display:flex;align-items:center;gap:18px;width:min(100%,1180px);margin:0 auto 20px;`;
+const Logo=styled.div`display:flex;align-items:center;gap:10px;font-size:15px;font-weight:800;letter-spacing:.15em;text-transform:uppercase;color:#f8fbff;`;
+const LogoMark=styled.span`display:grid;place-items:center;width:32px;height:32px;border-radius:10px;background:rgba(255,255,255,.18);color:#ffdb83;box-shadow:inset 0 1px rgba(255,255,255,.3);`;
+const HeaderSearch=styled.form`position:relative;display:flex;align-items:center;gap:8px;width:min(100%,360px);margin-left:auto;padding:7px 8px 7px 13px;border:1px solid rgba(255,255,255,.25);border-radius:14px;background:rgba(255,255,255,.12);backdrop-filter:blur(12px);input{width:100%;border:0;outline:0;background:transparent;color:#fff;font:inherit;font-size:13px;&::placeholder{color:rgba(255,255,255,.68)}}button{display:grid;place-items:center;width:32px;height:32px;border:0;border-radius:10px;background:rgba(255,255,255,.18);color:#fff;cursor:pointer}}`;
+const Shell=styled.main`position:relative;overflow:hidden;width:min(100%,1180px);min-height:620px;margin:0 auto;border:1px solid rgba(255,255,255,.2);border-radius:34px;background:var(--surface);box-shadow:0 30px 80px rgba(15,23,42,.25);`;
+const Loading=styled.div`display:grid;place-items:center;min-height:620px;padding:40px;text-align:center;color:rgba(255,255,255,.8);.spinner{width:34px;height:34px;margin-bottom:16px;border:3px solid rgba(255,255,255,.22);border-top-color:#fff;border-radius:50%;animation:spin 1s linear infinite}@keyframes spin{to{transform:rotate(360deg)}}`;
+const ErrorBox=styled.div`display:grid;place-items:center;min-height:620px;padding:40px;text-align:center;color:#fff;h2{margin:12px 0 6px;font-size:22px}p{max-width:360px;margin:0 0 20px;color:rgba(255,255,255,.7);font-size:14px}button{border:0;border-radius:12px;padding:11px 16px;background:#fff;color:#22416e;font:inherit;font-weight:700;cursor:pointer}`;
+function App(){
+  const [place,setPlace]=useState(DEFAULT_PLACE); const [weather,setWeather]=useState(null); const [status,setStatus]=useState('loading'); const [error,setError]=useState(''); const [query,setQuery]=useState(''); const [searching,setSearching]=useState(false); const controller=useRef(null);
+  const load=useCallback(async nextPlace=>{controller.current?.abort();const abort=new AbortController();controller.current=abort;setStatus('loading');setError('');try{const data=await getForecast(nextPlace,abort.signal);if(!abort.signal.aborted){setPlace(nextPlace);setWeather(data);setStatus('ready');}}catch(e){if(!abort.signal.aborted){setError(e.message||'No se pudo cargar el clima.');setStatus('error');}}},[]);
+  useEffect(()=>{let cancelled=false;const start=()=>{if(navigator.geolocation){navigator.geolocation.getCurrentPosition(async p=>{if(cancelled)return;const located=await locate(p.coords);if(!cancelled)load(located)},()=>load(DEFAULT_PLACE),{enableHighAccuracy:false,timeout:5000,maximumAge:900000})}else load(DEFAULT_PLACE)};start();return()=>{cancelled=true;controller.current?.abort()}},[load]);
+  const find=async event=>{event.preventDefault();if(!query.trim())return;setSearching(true);try{const found=await searchPlaces(query);if(found[0]){setQuery('');load({...found[0],country:found[0].country||'',country_code:found[0].country_code||''})}else setError('No encontramos esa ciudad.')}catch(e){setError('No encontramos esa ciudad.')}finally{setSearching(false)}};
+  const nearby=useMemo(()=>nearbyPlaces(place),[place]);
+  const theme=weather?.current?.is_day?'day':'night';
+  return <AppFrame className={theme}><AppHeader><Logo><LogoMark><Icon name="sun" size={17}/></LogoMark>Clima</Logo><HeaderSearch onSubmit={find}><Icon name="search" size={17}/><input value={query} onChange={e=>setQuery(e.target.value)} placeholder="Buscar una ciudad…" aria-label="Buscar una ciudad"/><button type="submit" aria-label="Buscar" disabled={searching}><Icon name="arrow" size={16}/></button></HeaderSearch></AppHeader><Shell>{status==='loading'&&<Loading><div><div className="spinner"/><div>Buscando el cielo de {place.name}…</div></div></Loading>}{status==='error'&&<ErrorBox><div><Icon name="refresh" size={32}/><h2>No pudimos cargar el clima</h2><p>{error}</p><button onClick={()=>load(place)}>Intentar de nuevo</button></div></ErrorBox>}{status==='ready'&&weather&&<WeatherView weather={weather} place={place} nearby={nearby} onSelectPlace={load}/>}</Shell></AppFrame>;
 }
-
 export default App;

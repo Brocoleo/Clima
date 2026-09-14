@@ -1,21 +1,2 @@
-import React from "react";
-import Weather from "../Animations/Weather";
-import { SearchBox, ChooseCityLabel} from "./styles";
-
-const CityComponent = (props) => {
-  const { updateCity, fetchWeather } = props;
-  return (
-    <>
-    <ChooseCityLabel>Busca tu ciudad</ChooseCityLabel>
-    <Weather />      
-      <SearchBox onSubmit={fetchWeather}>
-        <input
-          onChange={(e) => updateCity(e.target.value)}
-          placeholder="Ciudad"
-        />
-        <button type={"submit"}>Buscar</button>
-      </SearchBox>
-    </>
-  );
-};
-export default CityComponent;
+import React from "react";import Weather from "../Animations/Weather";import {SearchBox,ChooseCityLabel,Intro,ErrorMessage} from "./styles";
+const CityComponent=({city,updateCity,fetchWeather,loading,error})=><><Intro><ChooseCityLabel>¿Qué tiempo hace hoy?</ChooseCityLabel><p>Consulta el clima en cualquier ciudad del mundo.</p></Intro><Weather/><SearchBox onSubmit={fetchWeather}><label htmlFor="city">Ciudad</label><div><input id="city" value={city} onChange={e=>updateCity(e.target.value)} placeholder="Ej. Santiago" autoComplete="off"/><button type="submit">{loading&&!city?"…":"Buscar"}</button></div></SearchBox>{error&&<ErrorMessage role="alert">{error}</ErrorMessage>}</>;export default CityComponent;

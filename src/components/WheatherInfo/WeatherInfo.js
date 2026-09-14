@@ -1,57 +1,16 @@
-import React from "react";
-
-import Selector from "../Selector";
-import {Condition, WeatherInfoContainer, WeatherInfoLabel, Location, InfoContainer, InfoIcon, InfoLabel, WeatherContainer} from "./styles"
-
-export const WeatherInfoIcons = {
-    atardecer: "/react-weather-app/icons/sunset.svg",
-    amanecer: "/react-weather-app/icons/sunrise.svg",
-    humedad: "/react-weather-app/icons/humidity.svg",
-    viento: "/react-weather-app/icons/wind.svg",
-    presión: "/react-weather-app/icons/pressure.svg",
-};
-
-
-const WeatherInfoComponent = (props) => {
-    const {name, value} = props;
-    return (
-        <InfoContainer>
-            <InfoIcon src={WeatherInfoIcons[name]}/>
-            <InfoLabel>
-                {value}
-                <span>{name}</span>
-            </InfoLabel>
-        </InfoContainer>
-    );
-};
-const WeatherComponent = (props) => {
-    const {weather} = props;
-    console.log(weather)
-    const isDay = weather?.weather[0].icon?.includes('d')
-    const getTime = (timeStamp) => {
-        return `${new Date(timeStamp * 1000).getHours()} : ${new Date(timeStamp * 1000).getMinutes()}`
-    }
-    return (
-        <>
-            <WeatherContainer>
-                <Condition>
-                    <span>{`${Math.floor(weather?.main?.temp - 273)}°C`}</span>
-                    {`  |  ${weather?.weather[0].description}`}
-                </Condition>
-                <Selector role={weather?.weather[0].icon} />
-            </WeatherContainer>
-            <Location>{`${weather?.name}, ${weather?.sys?.country}`}</Location>
-
-            <WeatherInfoLabel>Informacion climatica</WeatherInfoLabel>
-            <WeatherInfoContainer>
-                <WeatherInfoComponent name={isDay ? "atardecer" : "amanecer"}
-                                      value={`${getTime(weather?.sys[isDay ? "sunset" : "sunrise"])+` hrs`}`}/>
-                <WeatherInfoComponent name={"humedad"} value={weather?.main?.humidity +` %`}/>
-                <WeatherInfoComponent name={"viento"} value={weather?.wind?.speed +` m/s`}/>
-                <WeatherInfoComponent name={"presión"} value={weather?.main?.pressure +` hPa`}/>
-            </WeatherInfoContainer>
-        </>
-    );
-};
-
-export default WeatherComponent;
+import React,{useMemo,useState} from 'react';
+import styled from 'styled-components';
+import Sky,{Icon,WeatherIcon} from '../Sky';
+import {clock,condition,dateLabel,fmt,type} from '../../weather';
+import {Content,Hero,HeroTop,Location,HeroCopy,Temperature,Feels,Stats,Stat,Section,SectionTitle,Weekly,DayCard,Hourly,HourCard,Places,PlaceCard,SourceNote,Refresh} from './styles';
+const View=styled.div`position:relative;min-height:620px;overflow:hidden;background:linear-gradient(180deg,rgba(20,54,112,.2),rgba(8,30,67,.7));`;
+const Today=styled.div`position:relative;z-index:2;padding:38px 52px 25px;@media(max-width:700px){padding:28px 20px 20px}`;
+const Arrow=styled.span`display:grid;place-items:center;width:28px;height:28px;border-radius:50%;background:rgba(255,255,255,.12);`;
+function StatItem({icon,label,value}){return <Stat><span className="stat-icon"><Icon name={icon} size={18}/></span><div><strong>{value}</strong><small>{label}</small></div></Stat>}
+const hourLabel=iso=>iso.slice(11,16);
+export default function WeatherInfo({weather,place,nearby,onSelectPlace}){
+ const [selected,setSelected]=useState(0);const [refreshing,setRefreshing]=useState(false);const day=weather.daily[selected];const current=weather.current;const isDay=Boolean(current.is_day);const currentCondition=condition(current.weather_code);
+ const hours=useMemo(()=>{const list=day.hours||[];const start=selected===0?Math.max(0,list.findIndex(h=>h.time>=current.time)):0;return list.slice(start).filter((_,i)=>i%2===0).slice(0,9)},[day,current.time,selected]);
+ const refresh=async()=>{setRefreshing(true);try{await onSelectPlace(place,true)}finally{setRefreshing(false)}};
+ return <View className={`${isDay?'day':'night'} theme-${type(current.weather_code)}`}><Sky code={current.weather_code} isDay={isDay}/><Content><Today><HeroTop><Location><span className="pin"><Icon name="pin" size={17}/></span><div><strong>{place.name}</strong><small>{place.admin1||place.country||'Ubicación actual'} {place.gps&&'· GPS'}</small></div></Location><Refresh onClick={refresh} disabled={refreshing} aria-label="Actualizar clima"><Icon name="refresh" size={18}/></Refresh></HeroTop><Hero><HeroCopy><p className="eyebrow">{currentCondition}</p><Temperature>{fmt(current.temperature_2m)}<sup>°</sup></Temperature><Feels>Sensación térmica {fmt(current.apparent_temperature)}°</Feels><p className="updated">Ahora · {clock(current.time)} · {current.cloud_cover}% nubes</p></HeroCopy><WeatherIcon code={current.weather_code} isDay={isDay} large/></Hero><Stats><StatItem icon="drop" label="Humedad" value={`${fmt(current.relative_humidity_2m)}%`}/><StatItem icon="wind" label="Viento" value={`${fmt(current.wind_speed_10m)} km/h`}/><StatItem icon="pressure" label="Presión" value={`${fmt(current.pressure_msl)} hPa`}/><StatItem icon="sun" label="UV máximo" value={fmt(day.uv_index_max)}/></Stats></Today><Section><SectionTitle><div><p>PRONÓSTICO</p><h2>Esta semana</h2></div><span>7 días</span></SectionTitle><Weekly>{weather.daily.map((item,index)=><DayCard key={item.time} className={index===selected?'selected':''} onClick={()=>setSelected(index)}><b>{index===0?'Hoy':dateLabel(item.time,{weekday:'short'})}</b><WeatherIcon code={item.weather_code} isDay={index===0?isDay:true}/><div className="range"><strong>{fmt(item.temperature_2m_max)}°</strong><span>{fmt(item.temperature_2m_min)}°</span></div><small>{condition(item.weather_code)}</small><em><Icon name="drop" size={12}/>{fmt(item.precipitation_probability_max)}%</em></DayCard>)}</Weekly></Section><Section><SectionTitle><div><p>DETALLE DEL DÍA</p><h2>{dateLabel(day.time)}</h2></div><span>{condition(day.weather_code)}</span></SectionTitle><Hourly>{hours.map(item=><HourCard key={item.time}><b>{hourLabel(item.time)}</b><WeatherIcon code={item.weather_code} isDay={Boolean(item.is_day)}/><strong>{fmt(item.temperature_2m)}°</strong><small><Icon name="drop" size={11}/>{fmt(item.precipitation_probability)}%</small></HourCard>)}</Hourly></Section><Section><SectionTitle><div><p>EXPLORA</p><h2>Lugares cercanos</h2></div></SectionTitle><Places>{nearby.map(item=><PlaceCard key={item.name} onClick={()=>onSelectPlace(item)}><span className="place-pin"><Icon name="pin" size={16}/></span><div><strong>{item.name}</strong><small>{item.capital?'Capital · ':''}{fmt(item.distance)} km</small></div><Arrow><Icon name="arrow" size={15}/></Arrow></PlaceCard>)}</Places></Section><SourceNote>Datos meteorológicos de Open-Meteo · actualizados según tu zona horaria</SourceNote></Content></View>;
+}

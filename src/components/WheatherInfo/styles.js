@@ -1,72 +1,20 @@
-import styled from "styled-components";
-
-export const Location = styled.span`
-  margin: 15px auto;
-  text-transform: capitalize;
-  font-size: 4vh;
-  color:white;
-  font-weight: bold;
-`;
-export const Condition = styled.span`
-  margin: 20px auto;
-  text-transform: capitalize;
-  font-size: 14px;
-  color: #EEEEEE;
-  & span {
-    font-size: 28px;
-  }
-`;
-export const WeatherInfoLabel = styled.span`
-  margin: 20px 25px 10px;
-  text-transform: capitalize;
-  text-align: start;
-  width: 90%;
-  font-weight: bold;
-  font-size: 14px;
-  color: #fff;
-`;
-export const WeatherIcon = styled.img`
-  width: 100px;
-  height: 100px;
-  margin: 5px auto;
-
-`;
-export const WeatherContainer = styled.div`
-  display: flex;
-  width: 100%;
-  margin: 30px auto;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
-`;
-
-export const WeatherInfoContainer = styled.div`
-  display: flex;
-  width: 90%;
-  color:white;
-  flex-direction: row;
-  justify-content: space-evenly;
-  align-items: center;
-  flex-wrap: wrap;
-`;
-export const InfoContainer = styled.div`
-  display: flex;
-  margin: 5px 10px;
-  flex-direction: row;
-  justify-content: space-evenly;
-  align-items: center;
-`;
-export const InfoIcon = styled.img`
-  width: 36px;
-  height: 36px;
-`;
-export const InfoLabel = styled.span`
-  display: flex;
-  flex-direction: column;
-  font-size: 14px;
-  margin: 15px;
-  & span {
-    font-size: 12px;
-    text-transform: capitalize;
-  }
-`;
+import styled from 'styled-components';
+export const Content=styled.div`position:relative;z-index:1;color:#f8fbff`;
+export const HeroTop=styled.div`display:flex;justify-content:space-between;align-items:center`;
+export const Location=styled.div`display:flex;align-items:center;gap:10px;.pin{display:grid;place-items:center;width:34px;height:34px;border-radius:12px;color:#ffe29b;background:rgba(255,255,255,.13)}strong{display:block;font-size:18px;line-height:1.15;text-transform:capitalize}small{display:block;margin-top:3px;color:rgba(255,255,255,.65);font-size:11px}`;
+export const Hero=styled.div`display:flex;align-items:center;justify-content:space-between;min-height:230px;@media(max-width:560px){min-height:210px}`;
+export const HeroCopy=styled.div`.eyebrow{margin:0 0 4px;font-size:14px;color:rgba(255,255,255,.8);text-transform:capitalize}.updated{margin:11px 0 0;color:rgba(255,255,255,.58);font-size:11px}`;
+export const Temperature=styled.div`font-size:clamp(82px,13vw,132px);font-weight:300;letter-spacing:-.09em;line-height:.9;sup{font-size:.38em;vertical-align:top;margin-left:4px;letter-spacing:0}`;
+export const Feels=styled.p`margin:17px 0 0;color:rgba(255,255,255,.73);font-size:13px`;
+export const Stats=styled.div`display:grid;grid-template-columns:repeat(4,1fr);gap:10px;padding:10px;border:1px solid rgba(255,255,255,.14);border-radius:20px;background:rgba(255,255,255,.1);backdrop-filter:blur(14px);@media(max-width:650px){grid-template-columns:repeat(2,1fr)}`;
+export const Stat=styled.div`display:flex;align-items:center;gap:9px;min-width:0;padding:8px 7px;.stat-icon{display:grid;place-items:center;width:30px;height:30px;border-radius:10px;color:#bfe6ff;background:rgba(255,255,255,.11)}strong{display:block;font-size:13px;white-space:nowrap}small{display:block;margin-top:2px;color:rgba(255,255,255,.6);font-size:10px}`;
+export const Section=styled.section`padding:28px 52px 0;@media(max-width:700px){padding:25px 20px 0}`;
+export const SectionTitle=styled.div`display:flex;align-items:end;justify-content:space-between;margin-bottom:14px;p{margin:0 0 5px;color:rgba(255,255,255,.5);font-size:10px;font-weight:800;letter-spacing:.16em}h2{margin:0;font-size:20px;letter-spacing:-.02em}span{color:rgba(255,255,255,.55);font-size:11px;text-transform:capitalize}`;
+export const Weekly=styled.div`display:grid;grid-template-columns:repeat(7,1fr);gap:8px;overflow:auto;padding:2px 0 6px;@media(max-width:850px){grid-template-columns:repeat(7,108px)}`;
+export const DayCard=styled.button`display:flex;align-items:center;min-width:0;min-height:183px;flex-direction:column;gap:9px;padding:14px 8px;border:1px solid rgba(255,255,255,.12);border-radius:18px;background:rgba(255,255,255,.08);color:#fff;cursor:pointer;transition:transform .2s,background .2s,border .2s;&:hover{transform:translateY(-3px);background:rgba(255,255,255,.14)}&.selected{border-color:rgba(255,224,153,.72);background:rgba(255,255,255,.18);box-shadow:0 8px 20px rgba(8,22,54,.18)}b{font-size:12px;text-transform:capitalize}.weather-icon{width:51px;height:46px}.range{display:flex;align-items:baseline;gap:7px;strong{font-size:19px}span{font-size:14px;color:rgba(255,255,255,.54)}}small{width:100%;overflow:hidden;color:rgba(255,255,255,.7);font-size:10px;white-space:nowrap;text-overflow:ellipsis;text-transform:capitalize}em{display:flex;align-items:center;gap:3px;margin-top:auto;color:#9cd8ff;font-size:10px;font-style:normal}`;
+export const Hourly=styled.div`display:flex;gap:9px;overflow-x:auto;padding:2px 0 7px`;
+export const HourCard=styled.div`display:flex;align-items:center;min-width:76px;flex-direction:column;gap:8px;padding:12px 9px;border:1px solid rgba(255,255,255,.1);border-radius:16px;background:rgba(255,255,255,.07);b{font-size:11px;color:rgba(255,255,255,.63)}.weather-icon{width:35px;height:31px}strong{font-size:16px}small{display:flex;align-items:center;gap:2px;color:#9cd8ff;font-size:10px}`;
+export const Places=styled.div`display:grid;grid-template-columns:repeat(3,1fr);gap:10px;@media(max-width:700px){grid-template-columns:1fr}`;
+export const PlaceCard=styled.button`display:flex;align-items:center;gap:10px;padding:14px;border:1px solid rgba(255,255,255,.1);border-radius:16px;background:rgba(255,255,255,.08);color:#fff;text-align:left;cursor:pointer;transition:background .2s;&:hover{background:rgba(255,255,255,.15)}.place-pin{display:grid;place-items:center;width:30px;height:30px;border-radius:10px;color:#ffd877;background:rgba(255,215,119,.12)}div{flex:1}strong{display:block;font-size:13px}small{display:block;margin-top:3px;color:rgba(255,255,255,.55);font-size:10px}.arrow{opacity:.6}`;
+export const SourceNote=styled.p`padding:25px 52px 30px;margin:0;color:rgba(255,255,255,.4);font-size:10px;@media(max-width:700px){padding:25px 20px 28px}`;
+export const Refresh=styled.button`display:grid;place-items:center;width:36px;height:36px;border:1px solid rgba(255,255,255,.17);border-radius:12px;background:rgba(255,255,255,.1);color:#fff;cursor:pointer;transition:transform .2s;&:hover{transform:rotate(30deg)}&:disabled{opacity:.5;animation:spin 1s linear infinite}@keyframes spin{to{transform:rotate(360deg)}}`;
